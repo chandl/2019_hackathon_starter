@@ -1,7 +1,12 @@
 package com.shasta.client;
 
+import com.shasta.img.Img2Ascii;
 import com.shasta.threaded.ClientRunnable;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
 
 
 /**
@@ -12,6 +17,8 @@ import java.net.Socket;
  * <p>Made as a starter project for the 2019 Shasta Networks/SOU CS Club Hackathon.</p>
  */
 public class Client extends ClientRunnable {
+
+    private static String prompt = "==>";
 
 
     public Client(Socket clientSocket) {
@@ -24,7 +31,11 @@ public class Client extends ClientRunnable {
      */
     @Override
     public void handleConnect() {
-        //TODO IMPLEMENT
+        try {
+            sendMessage("Welcome! Please enter an image URL: \n" + prompt);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -41,6 +52,61 @@ public class Client extends ClientRunnable {
      */
     @Override
     protected void handleMessage(String str) {
-        //TODO IMPLEMENT
+
+        if(str.startsWith("/")){
+            handleCommand(str);
+        }
+
+        try {
+            URL url = new URL(str);
+            Img2Ascii ascii = new Img2Ascii();
+
+            sendMessage("Converting image to ASCII!\n");
+
+            String out = ascii.convertToAscii(url);
+            sendMessage(out);
+
+        } catch (MalformedURLException e) {
+            try {
+                sendMessage("Bad URL Entered: " + str + ".\n" );
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            try {
+                sendMessage("Error Converting URL to ASCII. Try another.\n");
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+
+        try {
+            sendMessage(prompt);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleCommand(String str) {
+        switch(str){
+            case "/quit":
+                try {
+                    getClientSocket().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            default:
+                try {
+                    sendMessage("Command Not Recognized: " + str);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
     }
 }
