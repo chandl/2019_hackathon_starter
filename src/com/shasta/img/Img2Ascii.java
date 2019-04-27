@@ -34,13 +34,11 @@ public class Img2Ascii {
     }
 
 
-    public String convertToAscii(URL imgUrl) throws Exception{
-
-        int desiredWidth = 350;
+    public String convertToAscii(URL imgUrl, int desiredWidth) throws Exception{
         try {
             BufferedImage tmp = ImageIO.read(imgUrl);
             double change = desiredWidth/(double)tmp.getWidth();
-            img = resize(tmp, (int)(tmp.getHeight()*change*.4), desiredWidth);
+            img = resize(tmp, (int)(tmp.getHeight()*change*.33), desiredWidth);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -64,6 +62,7 @@ public class Img2Ascii {
 
     public String strChar(double g) {
         String str = " ";
+        
         if (g >= 240) {
             str = " ";
         } else if (g >= 210) {

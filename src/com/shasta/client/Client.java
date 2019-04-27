@@ -19,6 +19,7 @@ import java.net.URL;
 public class Client extends ClientRunnable {
 
     private static String prompt = "==>";
+    private int desiredWidth = 350;
 
 
     public Client(Socket clientSocket) {
@@ -55,6 +56,7 @@ public class Client extends ClientRunnable {
 
         if(str.startsWith("/")){
             handleCommand(str);
+            return;
         }
 
         try {
@@ -63,7 +65,7 @@ public class Client extends ClientRunnable {
 
             sendMessage("Converting image to ASCII!\n");
 
-            String out = ascii.convertToAscii(url);
+            String out = ascii.convertToAscii(url, desiredWidth);
             sendMessage(out);
 
         } catch (MalformedURLException e) {
@@ -92,10 +94,29 @@ public class Client extends ClientRunnable {
     }
 
     private void handleCommand(String str) {
-        switch(str){
+        String[] strArr = str.split(" ");
+        switch(strArr[0]){
             case "/quit":
                 try {
                     getClientSocket().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "/width":
+                try {
+                    if(strArr.length > 1){
+                        try {
+                            desiredWidth = Integer.parseInt(strArr[1]);
+                            sendMessage("Successfully set image width to " + desiredWidth + ".\n");
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+                    }else {
+                        sendMessage("No width defined, keeping image width at " + desiredWidth + ".\n");
+                    }
+
+                    sendMessage(prompt);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
