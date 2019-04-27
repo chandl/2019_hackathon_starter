@@ -2,6 +2,7 @@ package com.shasta.client;
 
 import com.shasta.img.Img2Ascii;
 import com.shasta.threaded.ClientRunnable;
+import com.shasta.threaded.MultiThreadedServer;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -44,7 +45,7 @@ public class Client extends ClientRunnable {
      */
     @Override
     public void handleDisconnect() {
-        //TODO IMPLEMENT
+        MultiThreadedServer.removeClient(this);
     }
 
     /**

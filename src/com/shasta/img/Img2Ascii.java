@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.nio.Buffer;
 
 import javax.imageio.ImageIO;
 
@@ -37,9 +38,18 @@ public class Img2Ascii {
     public String convertToAscii(URL imgUrl, int desiredWidth) throws Exception{
         try {
             BufferedImage tmp = ImageIO.read(imgUrl);
-            double change = desiredWidth/(double)tmp.getWidth();
-            img = resize(tmp, (int)(tmp.getHeight()*change*.33), desiredWidth);
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return convertToAscii(img, desiredWidth);
+    }
+
+    public String convertToAscii(BufferedImage tmp, int desiredWidth) throws Exception{
+        try {
+            double change = desiredWidth / (double) tmp.getWidth();
+            img = resize(tmp, (int) (tmp.getHeight() * change * .33), desiredWidth);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -62,7 +72,7 @@ public class Img2Ascii {
 
     public String strChar(double g) {
         String str = " ";
-        
+
         if (g >= 240) {
             str = " ";
         } else if (g >= 210) {

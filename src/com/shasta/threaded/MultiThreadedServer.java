@@ -5,6 +5,8 @@ import com.shasta.client.Client;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Credits for this class go to http://tutorials.jenkov.com/java-multithreaded-servers/multithreaded-server.html
@@ -28,8 +30,23 @@ public class MultiThreadedServer implements Runnable {
     private ServerSocket serverSocket = null;
     private boolean isStopped = false;
 
+    public static List<Client> getClients() {
+        return clients;
+    }
+
+    public static void setClients(List<Client> clients) {
+        MultiThreadedServer.clients = clients;
+    }
+
+    public static void removeClient(Client client){
+        clients.remove(client);
+    }
+
+    private static List<Client> clients;
+
     public MultiThreadedServer(int port) {
         this.serverPort = port;
+        clients = new ArrayList<>();
     }
 
     /**
@@ -54,6 +71,7 @@ public class MultiThreadedServer implements Runnable {
 
             //Client has connected, create a new Client object for them.
             Client client = new Client(clientSocket);
+            clients.add(client);
             //Start the Client thread.
             new Thread(client).start();
         }

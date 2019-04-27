@@ -1,6 +1,7 @@
 package com.shasta;
 
 import com.shasta.threaded.MultiThreadedServer;
+import com.shasta.video.Video;
 
 /**
  * Multithreaded server that users can telnet into.
@@ -31,9 +32,11 @@ public class TelnetServer {
         server = new MultiThreadedServer(port);
         Thread main = new Thread(server);
         main.start();
+
+        Thread vid = new Thread(new Video());
+        vid.start();
         try {
-            //keep the server open indefinitely.
-            main.join();
+            vid.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
