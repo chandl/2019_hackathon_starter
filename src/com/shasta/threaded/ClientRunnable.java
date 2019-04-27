@@ -73,6 +73,12 @@ public abstract class ClientRunnable implements Runnable {
      */
     public abstract void handleConnect();
 
+    public void clearLines(int lines) throws IOException{
+        for(int i = lines; i > 0; i--) {
+            getClientSocket().getOutputStream().write("\r\033[1A\033[0K$@".getBytes());
+        }
+    }
+
     /**
      * Sends the client a message.
      * @param message The message to send.

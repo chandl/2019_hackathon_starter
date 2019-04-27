@@ -44,9 +44,10 @@ public class Video implements Runnable{
         while(true) {
             BufferedImage image = webcam.getImage();
             try {
-                String asciiimg = converter.convertToAscii(image, 640);
+                String asciiimg = converter.convertToAscii(image, 420);
                 MultiThreadedServer.getClients().forEach(client -> {
                     try {
+                        client.clearLines(converter.getHeight());
                         client.sendMessage(asciiimg);
                     } catch (IOException e) {
                         e.printStackTrace();

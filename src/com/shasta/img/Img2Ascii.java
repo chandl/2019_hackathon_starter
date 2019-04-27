@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.Buffer;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -17,12 +21,17 @@ public class Img2Ascii {
     private PrintWriter prntwrt;
     private FileWriter filewrt;
 
+    public static Map<String, Integer> rgbToAnscii;
+
+    public int getHeight() {
+        return height;
+    }
+
+    private int height;
+
     public Img2Ascii() {
-//        try {
-//            prntwrt = new PrintWriter(filewrt = new FileWriter("asciiart.txt",
-//                    false));
-//        } catch (IOException ex) {
-//        }
+        rgbToAnscii = new HashMap<String, Integer>();
+        //rgbToAnscii.put()
     }
 
     private static BufferedImage resize(BufferedImage img, int height, int width) {
@@ -48,7 +57,8 @@ public class Img2Ascii {
     public String convertToAscii(BufferedImage tmp, int desiredWidth) throws Exception{
         try {
             double change = desiredWidth / (double) tmp.getWidth();
-            img = resize(tmp, (int) (tmp.getHeight() * change * .33), desiredWidth);
+            height = (int) (tmp.getHeight() * change * .33);
+            img = resize(tmp, height, desiredWidth);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -59,7 +69,12 @@ public class Img2Ascii {
                 Color pixcol = new Color(img.getRGB(j, i));
                 pixval = (((pixcol.getRed() * 0.30) + (pixcol.getBlue() * 0.59) + (pixcol
                         .getGreen() * 0.11)));
-                sb.append(strChar(pixval));
+                //if((i+j) % 10 == 0) {
+                //    sb.append(String.format("\u001B[38;5;%dm", (int) pixval));
+                //}
+                sb.append(strChar(255-pixval));
+                //sb.append("\e[0m");
+
             }
             try {
                 sb.append("\n");
@@ -94,6 +109,8 @@ public class Img2Ascii {
         }
         return str;
     }
+
+
 
 //    public void print(String str) {
 //        try {
