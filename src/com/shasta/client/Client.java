@@ -66,7 +66,7 @@ public class Client extends ClientRunnable {
 
             sendMessage("Converting image to ASCII!\n");
 
-            String out = ascii.convertToAscii(url, desiredWidth);
+            String out = ascii.convertToAscii(url, desiredWidth, false);
             sendMessage(out);
 
         } catch (MalformedURLException e) {

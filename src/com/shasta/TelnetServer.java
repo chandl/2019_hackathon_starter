@@ -33,7 +33,7 @@ public class TelnetServer {
         Thread main = new Thread(server);
         main.start();
 
-        Thread vid = new Thread(new Video());
+        Thread vid = new Thread(new Video(true));
         vid.start();
         try {
             vid.join();

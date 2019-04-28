@@ -17,7 +17,7 @@ import javax.imageio.ImageIO;
 public class Img2Ascii {
 
     private BufferedImage img;
-    private double pixval;
+    private int pixval;
     private PrintWriter prntwrt;
     private FileWriter filewrt;
 
@@ -44,17 +44,17 @@ public class Img2Ascii {
     }
 
 
-    public String convertToAscii(URL imgUrl, int desiredWidth) throws Exception{
+    public String convertToAscii(URL imgUrl, int desiredWidth, boolean useColor) throws Exception{
         try {
             BufferedImage tmp = ImageIO.read(imgUrl);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return convertToAscii(img, desiredWidth);
+        return convertToAscii(img, desiredWidth, useColor);
     }
 
-    public String convertToAscii(BufferedImage tmp, int desiredWidth) throws Exception{
+    public String convertToAscii(BufferedImage tmp, int desiredWidth, boolean useColor) throws Exception{
         try {
             double change = desiredWidth / (double) tmp.getWidth();
             height = (int) (tmp.getHeight() * change * .33);
@@ -67,14 +67,16 @@ public class Img2Ascii {
         for (int i = 0; i < img.getHeight(); i++) {
             for (int j = 0; j < img.getWidth(); j++) {
                 Color pixcol = new Color(img.getRGB(j, i));
-                pixval = (((pixcol.getRed() * 0.30) + (pixcol.getBlue() * 0.59) + (pixcol
-                        .getGreen() * 0.11)));
-                //if((i+j) % 10 == 0) {
-                //    sb.append(String.format("\u001B[38;5;%dm", (int) pixval));
-                //}
-                sb.append(strChar(255-pixval));
-                //sb.append("\e[0m");
 
+                pixval = 16 + ((int) (6f * ((float) pixcol.getRed() / 256f))) * 36 +
+                        ((int) (6f * ((float) pixcol.getGreen() / 256f))) * 6 +
+                        ((int) (6f * ((float) pixcol.getBlue() / 256f)));
+
+                if(useColor && ((i+j) % 5 == 0)) {
+                    addColor(sb, pixval);
+                }
+
+                sb.append(strChar(256-pixval));
             }
             try {
                 sb.append("\n");
@@ -85,7 +87,34 @@ public class Img2Ascii {
         return sb.toString();
     }
 
-    public String strChar(double g) {
+    private void addColor(StringBuilder sb, int pixcol){
+        /*
+        String str = " ";
+
+        if (pixcol >= 240) {
+            str = "";
+        } else if (pixcol >= 210) {
+            str = ".";
+        } else if (pixcol >= 190) {
+            str = "*";
+        } else if (pixcol >= 170) {
+            str = "+";
+        } else if (pixcol >= 120) {
+            str = "^";
+        } else if (pixcol >= 110) {
+            str = "&";
+        } else if (pixcol >= 80) {
+            str = "8";
+        } else if (pixcol >= 60) {
+            str = "#";
+        } else {
+            str = "@";
+        }*/
+
+        sb.append(String.format("\u001B[38;5;%dm", pixcol));
+    }
+
+    public String strChar(int g) {
         String str = " ";
 
         if (g >= 240) {
