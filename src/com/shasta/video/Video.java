@@ -20,8 +20,9 @@ public class Video implements Runnable{
     private Webcam webcam;
     private Img2Ascii converter;
     private boolean useColor;
+    private int refreshTime;
 
-    public Video (boolean useColor){
+    public Video (boolean useColor, int refreshTime){
 
         // get default webcam and open it
         webcam = Webcam.getDefault();
@@ -29,6 +30,11 @@ public class Video implements Runnable{
 
         converter = new Img2Ascii();
         this.useColor = useColor;
+        this.refreshTime = refreshTime;
+
+        if(useColor){
+            this.refreshTime += 200;
+        }
     }
 
     @Override
@@ -37,7 +43,7 @@ public class Video implements Runnable{
         while(true) {
             BufferedImage image = webcam.getImage();
             try {
-                String asciiimg = converter.convertToAscii(image, 420, useColor);
+                String asciiimg = converter.convertToAscii(image, 256, useColor);
                 MultiThreadedServer.getClients().forEach(client -> {
                     try {
                         client.clearLines(converter.getHeight());
@@ -47,7 +53,7 @@ public class Video implements Runnable{
 
                     }
                 });
-                sleep(100);
+                sleep(refreshTime);
             } catch (Exception e) {
                 e.printStackTrace();
             }

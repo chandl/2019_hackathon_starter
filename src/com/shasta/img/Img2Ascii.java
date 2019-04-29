@@ -72,7 +72,7 @@ public class Img2Ascii {
                         ((int) (6f * ((float) pixcol.getGreen() / 256f))) * 6 +
                         ((int) (6f * ((float) pixcol.getBlue() / 256f)));
 
-                if(useColor && ((i+j) % 5 == 0)) {
+                if(useColor && ((i+j) % 8 == 0)) {
                     addColor(sb, pixval);
                 }
 
@@ -83,34 +83,16 @@ public class Img2Ascii {
             } catch (Exception ex) {
             }
         }
-
+        //Reset at end
+        try {
+            sb.append("\u001B[0m");
+            sb.append("\n");
+        } catch (Exception ex) {
+        }
         return sb.toString();
     }
 
     private void addColor(StringBuilder sb, int pixcol){
-        /*
-        String str = " ";
-
-        if (pixcol >= 240) {
-            str = "";
-        } else if (pixcol >= 210) {
-            str = ".";
-        } else if (pixcol >= 190) {
-            str = "*";
-        } else if (pixcol >= 170) {
-            str = "+";
-        } else if (pixcol >= 120) {
-            str = "^";
-        } else if (pixcol >= 110) {
-            str = "&";
-        } else if (pixcol >= 80) {
-            str = "8";
-        } else if (pixcol >= 60) {
-            str = "#";
-        } else {
-            str = "@";
-        }*/
-
         sb.append(String.format("\u001B[38;5;%dm", pixcol));
     }
 
